@@ -4,10 +4,10 @@ import plotly.graph_objects as go
 import os
 
 # FIle with counts per species as .csv
-infile = "/Users/christopherhempel/Google Drive/KAUST/SIREN project/red_sea_species_list_standardized_with_coi_counts.csv"
+infile = "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_standardized_with_coi_counts.csv"
 # Graph output directory
 plot_outdir = (
-    "/Users/christopherhempel/Google Drive/KAUST/SIREN project/coi_counts_graphs"
+    "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/coi_counts_graphs"
 )
 # Min number of available COI seq for taxon to count as found
 min_seqs = 1
@@ -105,8 +105,10 @@ for rank in ranks:
     )
 
     # Save df
-    rank_df.to_csv("/Users/christopherhempel/Google Drive/KAUST/SIREN project/res_sea_species_list_final_{rank}_{min_seqs}_seqs.csv")
-                   
+    rank_df.to_csv(
+        "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_final_{rank}_{min_seqs}_seqs.csv"
+    )
+
     ### Define barplot title based on number of taxa
     if len(rank_df) >= num_taxa_barplots:
         barplot_title_total = f"Total number of taxa with ≥ {min_seqs} COI seqs available on GenBank - {rank} - first {num_taxa_barplots} taxa"
@@ -196,6 +198,7 @@ for rank in ranks:
         color_continuous_scale="Plasma_r",
         width=600,
         height=500,
+        title=rank,
     )
     bubble_plot.update_traces(marker=dict(line=dict(width=0)))
     bubble_plot.show()
