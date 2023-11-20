@@ -13,12 +13,12 @@ plot_outdir = (
 min_seqs = 1
 # Maximum number of taxa to show in barplots
 num_taxa_barplots = 50
-# Determine ranks to graph
-ranks = ["kingdom", "phylum", "class", "order", "family", "genus", "species"]
-# ranks = ["phylum"]
+# Determine ranks to visualize
+# ranks = ["kingdom", "phylum", "class", "order", "family", "genus"]
+ranks = ["phylum"]
 # Kingdom filter (all listed will be kept)
-kingdoms = ["Animalia", "Archaea", "Bacteria", "Chromista", "Plantae"]
-# kingdoms = ["Animalia"]
+# kingdoms = ["Animalia", "Archaea", "Bacteria", "Chromista", "Plantae"]
+kingdoms = ["Animalia"]
 
 
 # Make plot directory
@@ -106,7 +106,7 @@ for rank in ranks:
 
     # Save df
     rank_df.to_csv(
-        "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_final_{rank}_{min_seqs}_seqs.csv"
+        f"/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_final_{rank}_{min_seqs}_seqs.csv"
     )
 
     ### Define barplot title based on number of taxa
@@ -198,7 +198,7 @@ for rank in ranks:
         color_continuous_scale="Plasma_r",
         width=600,
         height=500,
-        title=rank,
+        title=f"{rank} with at least {min_seqs} available seqs",
     )
     bubble_plot.update_traces(marker=dict(line=dict(width=0)))
     bubble_plot.show()
