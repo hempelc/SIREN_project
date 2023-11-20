@@ -2,9 +2,10 @@
 import pandas as pd
 import re
 
+# Import data and drop empty rows
 df = pd.read_excel(
-    "/Users/christopherhempel/Google Drive/KAUST/SIREN project/Red Sea species list.xlsx",
-    sheet_name="All species non-stand. + DBs",
+    "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/Red Sea species list.xlsx",
+    sheet_name="Non-std. sp. + DBs not cleaned",
 ).dropna()
 
 
@@ -28,29 +29,31 @@ def clean_species(value):
     return value
 
 
-# Apply cleaning function
-df["Species"] = df["Species"].apply(clean_species)
-
-# Drop rows with None in 'Column1'
-df = df.dropna(subset=["Species"])
-
-
-# Manually check for species names that dont contain A-Z, a-z, "-" and space
 # Function to check if a string contains characters other than A-Za-z space "-"
 def contains_non_alpha(value):
     return bool(re.search(r"[^A-Za-z -]", value))
 
 
-# Identify rows with characters other than A-Za-z
+# Apply cleaning function
+df["Species"] = df["Species"].apply(clean_species)
+
+# Drop rows with None in 'Species'
+df = df.dropna(subset=["Species"])
+
+# Manually check for species names that dont contain A-Z, a-z, "-" and space
+## Identify rows with characters other than A-Za-z
 df["Contains_Non_Alpha"] = df["Species"].apply(contains_non_alpha)
 
-# Manually inspect
+## Manually inspect
 df[df["Contains_Non_Alpha"]]
 
-# Manually correct a few specific cases
+## Manually correct a few specific cases
 df["Species"] = df["Species"].str.replace("Actäa", "Actaea")
 df["Species"] = df["Species"].str.replace("Mülleria", "Muelleria")
 df["Species"] = df["Species"].str.replace("okhaënsis", "okhaensis")
+
+# Drop duplicate entries that are a result of cutting off subspecies names etc
+df = df.drop_duplicates()
 
 # Aggregate species and databases
 grouped = df.groupby("Species")["Database"].agg(list).reset_index()
@@ -64,6 +67,6 @@ result_df = result_df.drop(["Database_x", "Contains_Non_Alpha", "Database_y"], a
 result_df = result_df.rename(columns={"Database_all": "Database"})
 
 result_df.to_csv(
-    "/Users/christopherhempel/Google Drive/KAUST/SIREN project/Red Sea species list manually cleaned.csv",
+    "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/Red Sea species list manually cleaned.csv",
     index=False,
 )
