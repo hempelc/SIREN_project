@@ -1,16 +1,15 @@
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import os
 
-# FIle with counts per species as .csv
-infile = "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_standardized_with_coi_counts.csv"
+# File with counts per species as .csv
+infile = "/Users/christopherhempel/GDrive KAUST/KAUST/SIREN project data/red_sea_species_list_standardized_synonyms_merged_unaccepted_merged.csv"
 # Graph output directory
 plot_outdir = (
-    "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/coi_counts_graphs"
+    "/Users/christopherhempel/GDrive KAUST/KAUST/SIREN project data/coi_counts_graphs"
 )
 # Min number of available COI seq for taxon to count as found
-min_seqs = 1
+min_seqs = 3
 # Maximum number of taxa to show in barplots
 num_taxa_barplots = 50
 # Determine ranks to visualize
@@ -19,7 +18,6 @@ ranks = ["phylum"]
 # Kingdom filter (all listed will be kept)
 # kingdoms = ["Animalia", "Archaea", "Bacteria", "Chromista", "Plantae"]
 kingdoms = ["Animalia"]
-
 
 # Make plot directory
 os.makedirs(plot_outdir, exist_ok=True)
@@ -31,10 +29,9 @@ df = pd.read_csv(infile)
 df = df[df["kingdom"].isin(kingdoms)]
 
 # Turn to p/a based on min_seqs
-df["Number of COI sequences on GenBank"] = df[
-    "Number of COI sequences on GenBank"
-].apply(lambda x: 1 if x >= min_seqs else 0)
-df = df.rename(columns={"Number of COI sequences on GenBank": "COI sequence available"})
+df["COI sequence available"] = df["COI_sequences_on_GenBank"].apply(
+    lambda x: 1 if x >= min_seqs else 0
+)
 
 # Strip plots
 
@@ -106,7 +103,7 @@ for rank in ranks:
 
     # Save df
     rank_df.to_csv(
-        f"/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_final_{rank}_{min_seqs}_seqs.csv"
+        f"/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_results_{rank}_{min_seqs}_seqs.csv"
     )
 
     ### Define barplot title based on number of taxa
@@ -165,30 +162,36 @@ for rank in ranks:
     )
 
     ### Stacked barplot
-    stacked_df = rank_df.reset_index().sort_values("Taxon count", ascending=False)
+    stacked_df = rank_df.reset_index().sort_values("Taxon count", ascending=True)
     stacked_bar = px.bar(
         stacked_df,
-        x=rank,
-        y=["COI sequence available", "COI sequence not available"],
+        y=rank,
+        x=["COI sequence not available", "Taxon count"],
         title=f"Number of taxa on rank {rank} with and without ≥ {min_seqs} COI seqs available on GenBank",
+        barmode="group",
+        height=700,
+        width=500,
+        text_auto=True,
+        # log_x=True,
     )
 
     stacked_bar.update_layout(
-        xaxis_title="Taxa",
-        yaxis_title="Sequence counts",
-        width=max(300, 25 * len(stacked_df)),
-        legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99),
+        yaxis_title="Taxa",
+        xaxis_title="Sequence counts",
+        legend=dict(yanchor="bottom", y=0.01, xanchor="right", x=0.99),
     )
-    stacked_bar.update_xaxes(tickangle=45)
     stacked_bar.show()
     stacked_bar.write_image(
         os.path.join(plot_outdir, f"stacked_barplot_{rank}_{min_seqs}_seqs.png")
+    )
+    stacked_bar.write_image(
+        os.path.join(plot_outdir, f"stacked_barplot_{rank}_{min_seqs}_seqs.svg")
     )
 
     ### Bubble plot
     bubble_df = rank_df.reset_index()
     bubble_plot = px.scatter(
-        rank_df.reset_index(),
+        bubble_df,
         x="COI sequence available",
         y="COI sequence not available",
         size="Taxon count",
@@ -196,12 +199,27 @@ for rank in ranks:
         hover_name=rank,
         size_max=60,
         color_continuous_scale="Plasma_r",
-        width=600,
-        height=500,
+        width=550,
+        height=550,
         title=f"{rank} with at least {min_seqs} available seqs",
+        text=f"{rank}",
     )
+    bubble_plot.update_layout(
+        yaxis_range=[
+            -20,
+            1800,
+        ],
+        xaxis_range=[
+            -100,
+            1800,
+        ],
+    )
+    bubble_plot.update_yaxes(nticks=4)
     bubble_plot.update_traces(marker=dict(line=dict(width=0)))
     bubble_plot.show()
     bubble_plot.write_image(
         os.path.join(plot_outdir, f"bubbleplot_{rank}_{min_seqs}_seqs.png")
+    )
+    bubble_plot.write_image(
+        os.path.join(plot_outdir, f"bubbleplot_{rank}_{min_seqs}_seqs.svg")
     )

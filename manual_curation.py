@@ -4,7 +4,7 @@ import re
 
 # Import data and drop empty rows
 df = pd.read_excel(
-    "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/Red Sea species list.xlsx",
+    "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/Red Sea species list database mining.xlsx",
     sheet_name="Non-std. sp. + DBs not cleaned",
 ).dropna()
 
@@ -16,8 +16,8 @@ def clean_species(value):
     # Remove entries with 'cf.' and 'sp.'
     if "cf." in value or "sp." in value:
         return None
-    # Remove entries ending with " sp"
-    if value.endswith(" sp"):
+    # Remove entries ending with " sp" and " cf"
+    if value.endswith(" sp") or value.endswith(" cf"):
         return None
     # Cut subspecies, variance, and forma names down to the species name by
     # removing all but the first 2 words
@@ -67,6 +67,6 @@ result_df = result_df.drop(["Database_x", "Contains_Non_Alpha", "Database_y"], a
 result_df = result_df.rename(columns={"Database_all": "Database"})
 
 result_df.to_csv(
-    "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/Red Sea species list manually cleaned.csv",
+    "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_manually_cleaned.csv",
     index=False,
 )
