@@ -5,7 +5,11 @@ import os
 # File with counts per species as .csv
 infile = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/Red Sea species list processing - chris - NCBI + BOLD counts/red_sea_species_list_standardized_synonyms_merged_unaccepted_merged.csv"
 
+# Import data
 df = pd.read_csv(infile)
+
+# Filter the DataFrame based on the kingdom filter
+df = df[df["kingdom"]=="Animalia"]
 
 # Step 1: Convert 'BOLD' and 'GenBank' columns to binary
 df['BOLD_binary'] = df['COI_sequences_on_BOLD'].apply(lambda x: 1 if x >= 1 else 0)
