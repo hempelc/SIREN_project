@@ -2,10 +2,11 @@ import pandas as pd
 import geopandas as gpd
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 # Read the Excel file into a pandas DataFrame
-file_path = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/BOLD processing/lat lon bold.xlsx"
-df = pd.read_excel(file_path)
+file_path = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/BOLD processing/no_aves_no_insects/lat lon depth bold all specimens no aves no insects.csv"
+df = pd.read_csv(file_path)
 
 # Create a GeoDataFrame from the DataFrame by converting lat long columns to Point geometries
 geometry = [Point(xy) for xy in zip(df['long'], df['lat'])]
@@ -25,13 +26,7 @@ gdf.plot(ax=ax, marker='o', color='red', markersize=2)
 plt.show()
 
 
-import pandas as pd
-import plotly.express as px
-
-# Read the Excel file into a pandas DataFrame
-file_path = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/BOLD processing/lat lon bold.xlsx"
-df = pd.read_excel(file_path)
-
+# Interactive version
 df['hover_text'] = "Sample ID: " + df['sampleid'].astype(str) + '<br>' + "Species: " + df['name'].astype(str)
 
 # Create a scatter mapbox plot using Plotly Express
@@ -50,22 +45,6 @@ fig.show()
 
 
 # CODE TO REMOVE LAND POINTS
-
-import pandas as pd
-import geopandas as gpd
-from shapely.geometry import Point
-import plotly.express as px
-
-# Read the Excel file into a pandas DataFrame
-file_path = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/BOLD processing/lat lon bold.xlsx"
-df = pd.read_excel(file_path)
-
-# Create a GeoDataFrame from the DataFrame by converting lat long columns to Point geometries
-geometry = [Point(xy) for xy in zip(df['long'], df['lat'])]
-gdf = gpd.GeoDataFrame(df, geometry=geometry, crs='EPSG:4326')
-
-# Download the world map from GeoPandas datasets
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
 # Perform a spatial join to identify points that fall on land
 points_on_land = gpd.sjoin(gdf, world, how='inner', op='intersects')
@@ -106,5 +85,29 @@ world.plot(ax=ax, color='lightgrey')
 # Plot the points on the world map
 gdf.plot(ax=ax, marker='o', color='red', markersize=2)
 
-# Set plot title and show the plot
+# Show the plot
 plt.show()
+
+# Just Red Sea
+# Define the bounding box for the Red Sea region
+red_sea_bbox = [32, 44, 12.5, 30]  # [minx, maxx, miny, maxy]
+
+# Plot the points on the world map within the specified bounding box
+fig, ax = plt.subplots(figsize=(10, 6))
+world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+world.plot(ax=ax, color='lightgrey', edgecolor='black')
+ax.set_xlim(red_sea_bbox[0], red_sea_bbox[1])
+ax.set_ylim(red_sea_bbox[2], red_sea_bbox[3])
+
+gdf.plot(ax=ax, marker='o', color='red', markersize=6)
+
+# Show the plot
+plt.show()
+
+# Get info on number of specimens and species in Red Sea
+mask = (gdf['lat'] >= 12.5) & (gdf['lat'] <= 30) & (gdf['long'] >=32) & (gdf['long'] <=44)
+filtered_df = gdf[mask][["sampleid", "lat", "long", "depth", "name"]]
+print("Specimens in Red Sea: " + str(len(filtered_df)))
+print("Species in Red Sea: " + str(len(filtered_df["name"].drop_duplicates())))
+print("Specimens in Red Sea with depth: " + str(len(filtered_df[filtered_df["depth"].notna()])))
+print("Species in Red Sea with depth: " + str(len(filtered_df[filtered_df["depth"].notna()]["name"].drop_duplicates())))
