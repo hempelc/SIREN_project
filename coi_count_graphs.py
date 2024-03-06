@@ -168,11 +168,11 @@ for db in ["GenBank", "BOLD"]:
         )
 
         ### Stacked barplot
-        stacked_df = rank_df.reset_index().sort_values("Taxon count", ascending=True).drop(["proportion", "COI sequence not available GenBank"], axis=1)
+        stacked_df = rank_df.reset_index().sort_values("Taxon count", ascending=True).drop(["proportion", f"COI sequence not available {db}"], axis=1)
         #### Add others
         others_phyla = ["Acanthocephala", "Hemichordata", "Gnathostomulida", "Priapulida", "Tardigrada", "Nemertea", "Kinorhyncha", "Brachiopoda", "Ctenophora", "Sipuncula", "Xenacoelomorpha", "Chaetognatha"]
         others_df = stacked_df[stacked_df['phylum'].isin(others_phyla)]
-        others = {'phylum': 'Other', 'COI sequence available GenBank': others_df["COI sequence available GenBank"].sum(), "Taxon count": others_df["Taxon count"].sum()}
+        others = {'phylum': 'Other', f'COI sequence available {db}': others_df[f"COI sequence available {db}"].sum(), "Taxon count": others_df["Taxon count"].sum()}
         stacked_df = pd.concat([pd.DataFrame([others]), stacked_df[~stacked_df['phylum'].isin(others_phyla)]], ignore_index=True)
 
 
