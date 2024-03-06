@@ -3,7 +3,7 @@ import plotly.express as px
 import os
 
 # File with counts per species as .csv
-infile = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/Red Sea species list processing - chris - NCBI + BOLD counts/red_sea_species_list_standardized_synonyms_merged_unaccepted_merged.csv"
+infile = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/Red Sea species list processing - chris - NCBI + BOLD counts/red_sea_species_list_standardized_synonyms_merged_unaccepted_merged_just_animals_no_aves_no_insecta.csv"
 # Graph output directory
 plot_outdir = (
     "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/coi_counts_graphs_NCBI_and_BOLD"
@@ -168,7 +168,14 @@ for db in ["GenBank", "BOLD"]:
         )
 
         ### Stacked barplot
-        stacked_df = rank_df.reset_index().sort_values("Taxon count", ascending=True)
+        stacked_df = rank_df.reset_index().sort_values("Taxon count", ascending=True).drop(["proportion", "COI sequence not available GenBank"], axis=1)
+        #### Add others
+        others_phyla = ["Acanthocephala", "Hemichordata", "Gnathostomulida", "Priapulida", "Tardigrada", "Nemertea", "Kinorhyncha", "Brachiopoda", "Ctenophora", "Sipuncula", "Xenacoelomorpha", "Chaetognatha"]
+        others_df = stacked_df[stacked_df['phylum'].isin(others_phyla)]
+        others = {'phylum': 'Other', 'COI sequence available GenBank': others_df["COI sequence available GenBank"].sum(), "Taxon count": others_df["Taxon count"].sum()}
+        stacked_df = pd.concat([pd.DataFrame([others]), stacked_df[~stacked_df['phylum'].isin(others_phyla)]], ignore_index=True)
+
+
         stacked_bar = px.bar(
             stacked_df,
             y=rank,
@@ -178,6 +185,7 @@ for db in ["GenBank", "BOLD"]:
             height=700,
             width=500,
             text_auto=True,
+            color_discrete_sequence=["#ffa141","#00227a"]
             # log_x=True,
         )
 
