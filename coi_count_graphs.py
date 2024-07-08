@@ -3,11 +3,9 @@ import plotly.express as px
 import os
 
 # File with counts per species as .csv
-infile = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/Red Sea species list processing - chris - NCBI + BOLD counts/red_sea_species_list_standardized_synonyms_merged_unaccepted_merged_just_animals_no_aves_no_insecta.csv"
+infile = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/Red Sea species list processing - chris - NCBI + BOLD counts/red_sea_species_list_standardized_synonyms_merged_unaccepted_merged_just_animals_no_aves_no_insecta_new_BOLD_species.csv"
 # Graph output directory
-plot_outdir = (
-    "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/coi_counts_graphs_NCBI_and_BOLD"
-)
+plot_outdir = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/coi_counts_graphs_NCBI_and_BOLD"
 # Min number of available COI seq for taxon to count as found
 min_seqs = 1
 # Maximum number of taxa to show in barplots
@@ -58,7 +56,8 @@ for db in ["GenBank", "BOLD"]:
         )
         fig.show()
         fig.write_image(
-            os.path.join(plot_outdir, f"stripplot_{db}_{rank}_{min_seqs}_seqs.png"), width=300
+            os.path.join(plot_outdir, f"stripplot_{db}_{rank}_{min_seqs}_seqs.png"),
+            width=300,
         )
 
     if "pecies" in ranks[-1]:
@@ -86,14 +85,18 @@ for db in ["GenBank", "BOLD"]:
         fig.update_traces(insidetextanchor="middle")
         fig.show()
         fig.write_image(
-            os.path.join(plot_outdir, f"stackedbarplot_species_{db}_{min_seqs}_seqs.png")
+            os.path.join(
+                plot_outdir, f"stackedbarplot_species_{db}_{min_seqs}_seqs.png"
+            )
         )
 
     # Bar plots
     ## Loop over ranks
     for rank in ranks:
         ### Group counts of ranks and count how many taxa are grouped
-        rank_df = df.groupby(rank).agg({f"COI sequence available {db}": ["sum", "count"]})
+        rank_df = df.groupby(rank).agg(
+            {f"COI sequence available {db}": ["sum", "count"]}
+        )
         rank_df.columns = [
             f"COI sequence available {db}",
             "Taxon count",
@@ -122,9 +125,9 @@ for db in ["GenBank", "BOLD"]:
 
         ### Total barplots
         #### Sort and keep top X taxa, where X = num_taxa_barplots
-        rank_df_total = rank_df[f"COI sequence available {db}"].sort_values(ascending=False)[
-            :num_taxa_barplots
-        ]
+        rank_df_total = rank_df[f"COI sequence available {db}"].sort_values(
+            ascending=False
+        )[:num_taxa_barplots]
         #### Make bar plots
         barplot = px.bar(rank_df_total)
         barplot.update_layout(
@@ -164,17 +167,47 @@ for db in ["GenBank", "BOLD"]:
         barplot.update_layout(yaxis_range=[0, 100])
         barplot.show()
         barplot.write_image(
-            os.path.join(plot_outdir, f"barplot_relative_{db}_{rank}_{min_seqs}_seqs.png")
+            os.path.join(
+                plot_outdir, f"barplot_relative_{db}_{rank}_{min_seqs}_seqs.png"
+            )
         )
 
         ### Stacked barplot
-        stacked_df = rank_df.reset_index().sort_values("Taxon count", ascending=True).drop(["proportion", f"COI sequence not available {db}"], axis=1)
+        stacked_df = (
+            rank_df.reset_index()
+            .sort_values("Taxon count", ascending=True)
+            .drop(["proportion", f"COI sequence not available {db}"], axis=1)
+        )
         #### Add others
-        others_phyla = ["Acanthocephala", "Hemichordata", "Gnathostomulida", "Priapulida", "Tardigrada", "Nemertea", "Kinorhyncha", "Brachiopoda", "Ctenophora", "Sipuncula", "Xenacoelomorpha", "Chaetognatha"]
-        others_df = stacked_df[stacked_df['phylum'].isin(others_phyla)]
-        others = {'phylum': 'Other', f'COI sequence available {db}': others_df[f"COI sequence available {db}"].sum(), "Taxon count": others_df["Taxon count"].sum()}
-        stacked_df = pd.concat([pd.DataFrame([others]), stacked_df[~stacked_df['phylum'].isin(others_phyla)]], ignore_index=True)
-
+        others_phyla = [
+            "Acanthocephala",
+            "Hemichordata",
+            "Gnathostomulida",
+            "Priapulida",
+            "Tardigrada",
+            "Nemertea",
+            "Kinorhyncha",
+            "Brachiopoda",
+            "Ctenophora",
+            "Sipuncula",
+            "Xenacoelomorpha",
+            "Chaetognatha",
+        ]
+        others_df = stacked_df[stacked_df["phylum"].isin(others_phyla)]
+        others = {
+            "phylum": "Others",
+            f"COI sequence available {db}": others_df[
+                f"COI sequence available {db}"
+            ].sum(),
+            "Taxon count": others_df["Taxon count"].sum(),
+        }
+        stacked_df = pd.concat(
+            [
+                pd.DataFrame([others]),
+                stacked_df[~stacked_df["phylum"].isin(others_phyla)],
+            ],
+            ignore_index=True,
+        )
 
         stacked_bar = px.bar(
             stacked_df,
@@ -185,7 +218,7 @@ for db in ["GenBank", "BOLD"]:
             height=700,
             width=500,
             text_auto=True,
-            color_discrete_sequence=["#ffa141","#00227a"]
+            color_discrete_sequence=["#ffa141", "#00227a"],
             # log_x=True,
         )
 
@@ -196,10 +229,14 @@ for db in ["GenBank", "BOLD"]:
         )
         stacked_bar.show()
         stacked_bar.write_image(
-            os.path.join(plot_outdir, f"stacked_barplot_{db}_{rank}_{min_seqs}_seqs.png")
+            os.path.join(
+                plot_outdir, f"stacked_barplot_{db}_{rank}_{min_seqs}_seqs.png"
+            )
         )
         stacked_bar.write_image(
-            os.path.join(plot_outdir, f"stacked_barplot_{db}_{rank}_{min_seqs}_seqs.svg")
+            os.path.join(
+                plot_outdir, f"stacked_barplot_{db}_{rank}_{min_seqs}_seqs.svg"
+            )
         )
 
         ### Bubble plot
