@@ -1,10 +1,10 @@
 import pandas as pd
 
 df1 = pd.read_csv(
-    "/Users/simplexdna/Desktop/red_sea_species_list_standardized_synonyms_merged_unaccepted_merged_just_animals_no_aves_no_insecta_new_BOLD_species.csv"
+    "red_sea_species_list_standardized_synonyms_merged_unaccepted_merged_just_animals_no_aves_no_insecta_new_BOLD_species.csv"
 )
 df2 = pd.read_csv(
-    "/Users/simplexdna/Desktop/Dirk_lat_long_rec_search_noLand_allSpecies_standardized.csv"
+    "Dirk_lat_long_rec_search_noLand_allSpecies_standardized.csv"
 )
 
 # Convert count columns to binary
@@ -49,6 +49,6 @@ for i, species in enumerate(df1["species"]):
         df1.at[i, "depth_values"] = ""
 
 df1.to_csv(
-    "/Users/simplexdna/Desktop/red_sea_species_list_standardized_with_coi_counts_depth_lat_lon.csv",
+    "red_sea_species_list_standardized_with_coi_counts_depth_lat_lon.csv",
     index=False,
 )
