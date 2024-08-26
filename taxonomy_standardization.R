@@ -15,7 +15,7 @@ library(stringr)
 ## Database to use for taxonomy (for all options, check out https://brunobrr.github.io/bdc/articles/taxonomy.html)
 db <- "gbif" # Note: Tried GBIF and NCBI. GBIF seemed to perform best. NCBI just accepted everything
 ## Excel file containing species list
-species_list_file <- "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_manually_cleaned_with_coi_counts.csv"
+species_list_file <- "red_sea_species_list_manually_cleaned_with_coi_counts.csv"
 
 # Read in df
 df <- read.csv(species_list_file)
@@ -44,12 +44,12 @@ names(query_names)[names(query_names) == "notes"] <- "validation_status"
 
 # Export relevant info of output as is ("raw")
 raw_df <- query_names[c("original_search", "kingdom", "phylum", "class", "order", "family", "genus", "species", "database", "COI_sequences_on_GenBank", "validation_status")]
-write.csv(raw_df, "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_standardized_raw.csv", row.names = FALSE)
+write.csv(raw_df, "red_sea_species_list_standardized_raw.csv", row.names = FALSE)
 
 # Extract species names that were not found in the database
 species_df_not_accepted <- query_names[!grepl("accepted", query_names$validation_status), c("original_search", "database", "COI_sequences_on_GenBank", "validation_status")]
 names(species_df_not_accepted)[names(species_df_not_accepted) == "original_search"] <- "species_not_accepted"
-write.csv(species_df_not_accepted, "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_not_accepted_in_gbif.csv", row.names = FALSE)
+write.csv(species_df_not_accepted, "red_sea_species_list_not_accepted_in_gbif.csv", row.names = FALSE)
 
 # Create a new data frame for accepted species with tax and coi count info
 species_df_accepted <- query_names[grepl("accepted", query_names$validation_status), c("kingdom", "phylum", "class", "order", "family", "genus", "species", "database", "COI_sequences_on_GenBank")]
@@ -66,7 +66,7 @@ species_df_accepted <- species_df_accepted %>%
   ) %>%
   ungroup()
 # Export df
-write.csv(species_df_accepted, "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_standardized_synonyms_merged.csv", row.names = FALSE)
+write.csv(species_df_accepted, "red_sea_species_list_standardized_synonyms_merged.csv", row.names = FALSE)
 
 # Generate search info
 ## Replace validation statuses that have synonym in middle
@@ -100,5 +100,5 @@ info_df <- rbind(info_df, data.frame(observation = "number of species not accept
 info_df <- rbind(info_df, data.frame(observation = "number of duplicated species after standardization", count = num_dupl))
 info_df <- rbind(info_df, data.frame(observation = "number of unique, accepted species after standardization", count = num_total_after_standardization))
 
-write.csv(info_df, "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_standardization_info.csv", row.names = FALSE)
+write.csv(info_df, "red_sea_species_list_standardization_info.csv", row.names = FALSE)
 
