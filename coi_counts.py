@@ -2,9 +2,9 @@ import pandas as pd
 from Bio import Entrez
 
 # Set your email address for the Entrez API
-Entrez.email = "christopher.hempel@kaust.edu.sa"
-infile = "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_manually_cleaned.csv"
-outfile = "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_manually_cleaned_with_coi_counts.csv"
+Entrez.email = <email-address>
+infile = "red_sea_species_list_manually_cleaned.csv"
+outfile = "red_sea_species_list_manually_cleaned_with_coi_counts.csv"
 
 # Import df and clean
 df = pd.read_csv(infile)
