@@ -4,7 +4,7 @@ import re
 
 # Import data and drop empty rows
 df = pd.read_excel(
-    "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/Red Sea species list database mining.xlsx",
+    "Red Sea species list database mining.xlsx",
     sheet_name="Non-std. sp. + DBs not cleaned",
 ).dropna()
 
@@ -67,6 +67,6 @@ result_df = result_df.drop(["Database_x", "Contains_Non_Alpha", "Database_y"], a
 result_df = result_df.rename(columns={"Database_all": "Database"})
 
 result_df.to_csv(
-    "/Users/christopherhempel/Google Drive/KAUST/SIREN project data/red_sea_species_list_manually_cleaned.csv",
+    "red_sea_species_list_manually_cleaned.csv",
     index=False,
 )
