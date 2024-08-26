@@ -3,9 +3,9 @@ import plotly.express as px
 import os
 
 # File with counts per species as .csv
-infile = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/Red Sea species list processing - chris - NCBI + BOLD counts/red_sea_species_list_standardized_synonyms_merged_unaccepted_merged_just_animals_no_aves_no_insecta_new_BOLD_species.csv"
+infile = "red_sea_species_list_standardized_synonyms_merged_unaccepted_merged_just_animals_no_aves_no_insecta_new_BOLD_species.csv"
 # Graph output directory
-plot_outdir = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/coi_counts_graphs_NCBI_and_BOLD"
+plot_outdir = "coi_counts_graphs_NCBI_and_BOLD"
 # Min number of available COI seq for taxon to count as found
 min_seqs = 1
 # Maximum number of taxa to show in barplots
