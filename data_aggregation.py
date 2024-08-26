@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 
 # File with counts per species as .csv
-infile = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/Red Sea species list processing - chris - NCBI + BOLD counts/red_sea_species_list_standardized_synonyms_merged_unaccepted_merged_just_animals_no_aves_no_insecta_new_BOLD_species.csv"
+infile = "red_sea_species_list_standardized_synonyms_merged_unaccepted_merged_just_animals_no_aves_no_insecta_new_BOLD_species.csv"
 
 # Import data
 df = pd.read_csv(infile)
@@ -40,7 +40,7 @@ result_df = pd.DataFrame(
 ).transpose()
 
 result_df.to_csv(
-    "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/Red Sea species list processing - chris - NCBI + BOLD counts/count_summary_with_new_BOLD_species.csv",
+    "count_summary_with_new_BOLD_species.csv",
     header=False,
 )
 
@@ -71,6 +71,6 @@ fig = px.bar(
 )
 fig.update_layout(xaxis_title=None)
 fig.write_image(
-    "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/Red Sea species list processing - chris - NCBI + BOLD counts/count_summary_with_new_BOLD_species.png",
+    "count_summary_with_new_BOLD_species.png",
     height=400,
 )
