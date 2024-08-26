@@ -5,9 +5,8 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 # Read the Excel file into a pandas DataFrame
-file_path = "/Users/simplexdna/Library/CloudStorage/GoogleDrive-christopher.hempel@kaust.edu.sa/.shortcut-targets-by-id/1c91orCwfstL7NmlFbhdJ8Ssz87pDMHx-/SIREN project/BOLD processing/no_aves_no_insects/lat lon depth bold all specimens no aves no insects.csv"
+file_path = "lat lon depth bold all specimens no aves no insects.csv"
 df = pd.read_csv(file_path)
-# df = pd.read_table("/Users/simplexdna/Desktop/Dirk_lat_long_rec_search.txt")
 
 # Create a GeoDataFrame from the DataFrame by converting lat long columns to Point geometries
 geometry = [Point(xy) for xy in zip(df["long"], df["lat"])]
@@ -65,8 +64,6 @@ gdf_filtered["hover_text"] = (
     + "Species: "
     + gdf_filtered["name"].astype(str)
 )
-# gdf_filtered['hover_text'] = "Sample ID: " + gdf_filtered['sampleid'].astype(str) + '<br>' + "Species: " + gdf_filtered['species'].astype(str)
-# gdf_filtered.to_csv("/Users/simplexdna/Desktop/Dirk_lat_long_rec_search_noLand.csv")
 
 # Create a scatter mapbox plot using Plotly Express for points not on land
 fig = px.scatter_mapbox(
@@ -146,7 +143,7 @@ gdf_filtered_animals_with_species = gdf_filtered_animals_noNaN[
     ~gdf_filtered_animals_noNaN["species"].str.contains("sp\.|cf\.")
 ]
 gdf_filtered_animals_with_species.to_csv(
-    "/Users/simplexdna/Desktop/Dirk_lat_long_rec_search_noLand_allSpecies.csv"
+    "Dirk_lat_long_rec_search_noLand_allSpecies.csv"
 )
 
 
@@ -180,5 +177,5 @@ species_not_in_our_data = gdf_filtered_animals_with_species[
     ~gdf_filtered_animals_with_species["species"].isin(df["name"])
 ]
 species_not_in_our_data.to_csv(
-    "/Users/simplexdna/Desktop/Dirk_lat_long_rec_search_noLand_notInOurList.csv"
+    "Dirk_lat_long_rec_search_noLand_notInOurList.csv"
 )
